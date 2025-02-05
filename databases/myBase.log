@@ -1,0 +1,32 @@
+/*C8*/SET SCHEMA PUBLIC
+drop table if exists tperson cascade 
+drop sequence tperson_seq if exists
+create sequence tperson_seq start with 1 increment by 50
+create table tperson (birth_day date, id bigint not null, version bigint not null, second_name varchar(100) unique, first_name varchar(200) not null, primary key (id), constraint UKhmka1mrapu493w0ow6alm6soq unique (first_name, birth_day))
+create table if not exists NAME ( id integer not null,  name varchar(50) not null,  primary key (id) )
+create table if not exists NAME ( id integer not null,  name varchar(50) not null,  primary key (id) )
+/*C13*/SET SCHEMA PUBLIC
+\u000d\u000a    drop table if exists TPerson cascade 
+\u000d\u000a    drop sequence TPerson_SEQ if exists
+\u000d\u000a    create sequence TPerson_SEQ start with 1 increment by 50
+\u000d\u000a    create table TPerson (\u000d\u000a        birth_day date,\u000d\u000a        id bigint not null,\u000d\u000a        version bigint not null,\u000d\u000a        second_name varchar(100) unique,\u000d\u000a        first_name varchar(200) not null,\u000d\u000a        primary key (id),\u000d\u000a        constraint UK58gbcq3p83fgxehg706edmoun unique (first_name, birth_day)\u000d\u000a    )
+/*C8*/INSERT INTO TPERSON VALUES(NULL,1,0,'','Jean')
+ALTER SEQUENCE PUBLIC.TPERSON_SEQ RESTART WITH 51
+COMMIT
+INSERT INTO TPERSON VALUES(NULL,2,0,'Haspekian','Yvan')
+ALTER SEQUENCE PUBLIC.TPERSON_SEQ RESTART WITH 101
+COMMIT
+INSERT INTO TPERSON VALUES(NULL,3,0,'Baton','Th\u00e9au')
+COMMIT
+/*C13*/DISCONNECT
+/*C8*/drop table if exists tperson cascade 
+drop sequence tperson_seq if exists
+DISCONNECT
+/*C9*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C10*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C11*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C12*/SET SCHEMA PUBLIC
+DISCONNECT
