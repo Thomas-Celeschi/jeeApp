@@ -65,6 +65,20 @@ public class Person {
     @OrderBy("immatriculation ASC")
     private Set<Car> cars;
 
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    // @JoinTable est optionnelle (afin de préciser les tables)
+    @JoinTable(
+            name = "Person_Movie",
+            joinColumns = { @JoinColumn(name = "id_person") },
+            inverseJoinColumns = { @JoinColumn(name = "id_movie") }
+    )
+    @ToString.Exclude
+    private Set<Movie> movies;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cv_id")
+    private CV cv;
+
     @Version
     private long version = 0;
 
@@ -72,19 +86,19 @@ public class Person {
     public static long updateCounter = 0;
 
     public Person(String firstName, Date birthDay) {
-        this(0, firstName, null, birthDay, null,null, null, 0);
+        this(0, firstName, null, birthDay, null, null, null, null, null, 0);
     }
 
     public Person(String firstName, String secondName, Date birthDay) {
-        this(0, firstName, secondName,birthDay, null, null, null, 0);
+        this(0, firstName, secondName,birthDay, null, null, null, null, null, 0);
     }
 
     public Person(String firstName, String secondName, Date birthDay, Address address1) {
-        this(0, firstName, secondName,birthDay, address1, null, null, 0);
+        this(0, firstName, secondName,birthDay, address1, null, null, null, null, 0);
     }
 
     public Person(String firstName, String secondName, Date birthDay, Address address1, Address address2) {
-        this(0, firstName, secondName,birthDay, address1, address2, null, 0);
+        this(0, firstName, secondName,birthDay, address1, address2, null, null, null, 0);
     }
 
     public void addCar(Car c) {
@@ -93,6 +107,13 @@ public class Person {
         }
         cars.add(c);
         c.setOwner(this);
+    }
+
+    public void addMovie(Movie movie) {
+        if (movies == null) {
+            movies = new HashSet<>();
+        }
+        movies.add(movie);
     }
 
     @PreUpdate

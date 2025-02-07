@@ -1,16 +1,14 @@
 package myapp.jpa;
 
 import jakarta.persistence.RollbackException;
-import myapp.jpa.model.Address;
-import myapp.jpa.model.Car;
-import myapp.jpa.model.FirstName;
+import myapp.jpa.model.*;
 import org.hibernate.PropertyValueException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import myapp.jpa.dao.JpaDao;
-import myapp.jpa.model.Person;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -233,9 +231,70 @@ public class TestJpaDao {
 
     p1 = dao.update(p1);
 
-    var c3 = p1.getCars().stream().toList().get(0);
+    var p2 = dao.findPerson(p1.getId());
+    var c3 = p2.getCars().stream().toList().get(0);
     assertEquals(c3.getModel(), "Alpha Romeo");
   }
 
+  @Test
+  public void testMovie() {
+    var p1 = new Person("Jean", "", null);
+    p1 = dao.add(p1);
 
+    var m1 = new Movie("The Dark Knight");
+    m1 = dao.add(m1);
+    p1.addMovie(m1);
+    p1 = dao.update(p1);
+
+    var p2 = dao.findPerson(p1.getId());
+    assertEquals(p2.getMovies().stream().toList().get(0).getName(), "The Dark Knight");
+
+    p2.getMovies().remove(m1);
+    dao.update(p2);
+
+    var p3 = dao.findPerson(p2.getId());
+    assertFalse(p3.getMovies().contains(m1));
+  }
+
+  @Test
+  public void testCv() {
+    var p1 = new Person("Jean", "", null);
+    p1 = dao.add(p1);
+
+    var cv = new CV("Développeur");
+    cv = dao.add(cv);
+
+    p1.setCv(cv);
+    p1 = dao.update(p1);
+
+    var p2 = dao.findPerson(p1.getId());
+    assertEquals(p2.getCv().getTitle(), "Développeur");
+  }
+
+  @Test
+  public void testChangeFirstName() {
+    var p1 = new Person("Jean", "", null);
+    p1 = dao.add(p1);
+
+    dao.changeFirstName(p1.getId(), "Dimitri");
+    p1.setFirstName("Rolland");
+
+    Person finalP = p1;
+    assertThrows(ObjectOptimisticLockingFailureException.class, () -> dao.update(finalP));
+
+  }
+
+  @Test
+  public void testVersion() {
+    var p1 = new Person("Jean", "", null);
+    p1 = dao.add(p1);
+
+    var p2 = dao.findPerson(p1.getId());
+    p2.setFirstName("Dimitri");
+    dao.update(p2);
+
+    p1.setFirstName("Dimitri");
+    Person finalP = p1;
+    assertThrows(ObjectOptimisticLockingFailureException.class, () -> dao.update(finalP));
+  }
 }
