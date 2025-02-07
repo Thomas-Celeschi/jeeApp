@@ -1,24 +1,32 @@
 package myapp.jpa.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "Person")
-@Table(name = "TPerson",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {
-                        "first_name", "birth_day"
-                })
-        })
+@Table(
+    name = "TPerson",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"first_name", "birth_day"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedQuery(name="findPersonsByFirstName", query="SELECT p FROM Person p WHERE p.firstName LIKE :pattern")
+@NamedQueries({
+  @NamedQuery(
+      name = "findPersonsByFirstName",
+      query = "SELECT p FROM Person p WHERE p.firstName LIKE :pattern"),
+  @NamedQuery(
+      name = "findPersonsByCarModel",
+      query = "SELECT p FROM Person p JOIN p.cars c WHERE c.model LIKE :model")
+})
 public class Person {
 
     @Id
@@ -49,6 +57,13 @@ public class Person {
     })
     private Address address2;
 
+    @OneToMany(//
+            fetch = FetchType.LAZY, //
+            mappedBy = "owner", //
+            cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE } //
+    )
+    @OrderBy("immatriculation ASC")
+    private Set<Car> cars;
 
     @Version
     private long version = 0;
@@ -57,21 +72,28 @@ public class Person {
     public static long updateCounter = 0;
 
     public Person(String firstName, Date birthDay) {
-        this(0, firstName, null, birthDay, new Address(), new Address(), 0);
+        this(0, firstName, null, birthDay, null,null, null, 0);
     }
 
     public Person(String firstName, String secondName, Date birthDay) {
-        this(0, firstName, secondName,birthDay, new Address(), new Address(), 0);
+        this(0, firstName, secondName,birthDay, null, null, null, 0);
     }
 
     public Person(String firstName, String secondName, Date birthDay, Address address1) {
-        this(0, firstName, secondName,birthDay, address1, new Address(), 0);
+        this(0, firstName, secondName,birthDay, address1, null, null, 0);
     }
 
     public Person(String firstName, String secondName, Date birthDay, Address address1, Address address2) {
-        this(0, firstName, secondName,birthDay, address1, address2, 0);
+        this(0, firstName, secondName,birthDay, address1, address2, null, 0);
     }
 
+    public void addCar(Car c) {
+        if (cars == null) {
+            cars = new HashSet<>();
+        }
+        cars.add(c);
+        c.setOwner(this);
+    }
 
     @PreUpdate
     public void beforeUpdate() {
