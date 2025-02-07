@@ -60,6 +60,15 @@ public class JpaDao {
         return q.getResultList();
     }
 
+    public void changeFirstName(long idPerson, String firstName) {
+        Person p = em.find(Person.class, idPerson, LockModeType.PESSIMISTIC_WRITE);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
+        p.setFirstName(firstName);
+    }
+
     /*
      * Ajouter une personne
      */
@@ -74,6 +83,7 @@ public class JpaDao {
     public Person findPerson(long id) {
         Person p = em.find(Person.class, id);
         p.getCars().size();
+        p.getMovies().size();
         return p;
     }
 

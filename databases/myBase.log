@@ -1,36 +1,61 @@
 /*C8*/SET SCHEMA PUBLIC
 drop table if exists car cascade 
+drop table if exists cv cascade 
+drop table if exists movie cascade 
+drop table if exists person_movie cascade 
 drop table if exists tperson cascade 
+drop sequence cv_seq if exists
+drop sequence movie_seq if exists
 drop sequence tperson_seq if exists
+create sequence cv_seq start with 1 increment by 50
+create sequence movie_seq start with 1 increment by 50
 create sequence tperson_seq start with 1 increment by 50
 create table car (owner_id bigint, immatriculation varchar(255) not null, model varchar(255) not null, primary key (immatriculation))
-create table tperson (birth_day date, id bigint not null, version bigint not null, second_name varchar(100) unique, first_name varchar(200) not null, city varchar(255), city_2 varchar(255), country varchar(255), country_2 varchar(255), street varchar(255), street_2 varchar(255), primary key (id), constraint UKhmka1mrapu493w0ow6alm6soq unique (first_name, birth_day))
+create table cv (id bigint not null, title varchar(255) not null, primary key (id))
+create table movie (id bigint not null, name varchar(255) not null, primary key (id))
+create table person_movie (id_movie bigint not null, id_person bigint not null, primary key (id_movie, id_person))
+create table tperson (birth_day date, cv_id bigint unique, id bigint not null, version bigint not null, second_name varchar(100) unique, first_name varchar(200) not null, city varchar(255), city_2 varchar(255), country varchar(255), country_2 varchar(255), street varchar(255), street_2 varchar(255), primary key (id), constraint UKhmka1mrapu493w0ow6alm6soq unique (first_name, birth_day))
 alter table car add constraint FKe726rtcbnla8lkst1cgax6rw8 foreign key (owner_id) references tperson
+alter table person_movie add constraint FK9b5o1mouw8srk7ghybr6laf21 foreign key (id_movie) references movie
+alter table person_movie add constraint FK2c12mts111u1rh4nnh5acwu1y foreign key (id_person) references tperson
+alter table tperson add constraint FKjsw12wl1eo4wkrvw9q1eouny1 foreign key (cv_id) references cv
 create table if not exists NAME ( id integer not null,  name varchar(50) not null,  primary key (id) )
 create table if not exists NAME ( id integer not null,  name varchar(50) not null,  primary key (id) )
 /*C13*/SET SCHEMA PUBLIC
 \u000d\u000a    drop table if exists Car cascade 
+\u000d\u000a    drop table if exists CV cascade 
+\u000d\u000a    drop table if exists Movie cascade 
+\u000d\u000a    drop table if exists Person_Movie cascade 
 \u000d\u000a    drop table if exists TPerson cascade 
+\u000d\u000a    drop sequence CV_SEQ if exists
+\u000d\u000a    drop sequence Movie_SEQ if exists
 \u000d\u000a    drop sequence TPerson_SEQ if exists
+\u000d\u000a    create sequence CV_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Movie_SEQ start with 1 increment by 50
 \u000d\u000a    create sequence TPerson_SEQ start with 1 increment by 50
 \u000d\u000a    create table Car (\u000d\u000a        owner_id bigint,\u000d\u000a        immatriculation varchar(255) not null,\u000d\u000a        model varchar(255) not null,\u000d\u000a        primary key (immatriculation)\u000d\u000a    )
-\u000d\u000a    create table TPerson (\u000d\u000a        birth_day date,\u000d\u000a        id bigint not null,\u000d\u000a        version bigint not null,\u000d\u000a        second_name varchar(100) unique,\u000d\u000a        first_name varchar(200) not null,\u000d\u000a        city varchar(255),\u000d\u000a        city_2 varchar(255),\u000d\u000a        country varchar(255),\u000d\u000a        country_2 varchar(255),\u000d\u000a        street varchar(255),\u000d\u000a        street_2 varchar(255),\u000d\u000a        primary key (id),\u000d\u000a        constraint UK58gbcq3p83fgxehg706edmoun unique (first_name, birth_day)\u000d\u000a    )
+\u000d\u000a    create table CV (\u000d\u000a        id bigint not null,\u000d\u000a        title varchar(255) not null,\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Movie (\u000d\u000a        id bigint not null,\u000d\u000a        name varchar(255) not null,\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Person_Movie (\u000d\u000a        id_movie bigint not null,\u000d\u000a        id_person bigint not null,\u000d\u000a        primary key (id_movie, id_person)\u000d\u000a    )
+\u000d\u000a    create table TPerson (\u000d\u000a        birth_day date,\u000d\u000a        cv_id bigint unique,\u000d\u000a        id bigint not null,\u000d\u000a        version bigint not null,\u000d\u000a        second_name varchar(100) unique,\u000d\u000a        first_name varchar(200) not null,\u000d\u000a        city varchar(255),\u000d\u000a        city_2 varchar(255),\u000d\u000a        country varchar(255),\u000d\u000a        country_2 varchar(255),\u000d\u000a        street varchar(255),\u000d\u000a        street_2 varchar(255),\u000d\u000a        primary key (id),\u000d\u000a        constraint UK58gbcq3p83fgxehg706edmoun unique (first_name, birth_day)\u000d\u000a    )
 \u000d\u000a    alter table Car \u000d\u000a       add constraint FKidcym2fngsaap8n43vk7uvpw6 \u000d\u000a       foreign key (owner_id) \u000d\u000a       references TPerson
-/*C8*/INSERT INTO TPERSON VALUES(NULL,1,0,'','Jean',NULL,NULL,NULL,NULL,NULL,NULL)
+\u000d\u000a    alter table Person_Movie \u000d\u000a       add constraint FK7466dlyofm4apb9n3qfuqmv1o \u000d\u000a       foreign key (id_movie) \u000d\u000a       references Movie
+\u000d\u000a    alter table Person_Movie \u000d\u000a       add constraint FKph2gv8lpnj27l3c86kxh5q7g8 \u000d\u000a       foreign key (id_person) \u000d\u000a       references TPerson
+\u000d\u000a    alter table TPerson \u000d\u000a       add constraint FK3o40ldp4hkjbdhkvk2rj2f6gn \u000d\u000a       foreign key (cv_id) \u000d\u000a       references CV
+/*C8*/INSERT INTO TPERSON VALUES(NULL,NULL,1,0,'','Jean',NULL,NULL,NULL,NULL,NULL,NULL)
 ALTER SEQUENCE PUBLIC.TPERSON_SEQ RESTART WITH 51
 COMMIT
-INSERT INTO CAR VALUES(NULL,'EG-480-VX','Dacia')
-COMMIT
-INSERT INTO CAR VALUES(NULL,'AZ-369-BY','Alpha Romeo')
-COMMIT
-DELETE FROM CAR WHERE IMMATRICULATION='AZ-369-BY'
-INSERT INTO CAR VALUES(1,'AZ-369-BY','Alpha Romeo')
-DELETE FROM CAR WHERE IMMATRICULATION='EG-480-VX'
-INSERT INTO CAR VALUES(1,'EG-480-VX','Dacia')
+DELETE FROM TPERSON WHERE ID=1
+INSERT INTO TPERSON VALUES(NULL,NULL,1,1,'','Dimitri',NULL,NULL,NULL,NULL,NULL,NULL)
 COMMIT
 /*C13*/DISCONNECT
 /*C8*/drop table if exists car cascade 
+drop table if exists cv cascade 
+drop table if exists movie cascade 
+drop table if exists person_movie cascade 
 drop table if exists tperson cascade 
+drop sequence cv_seq if exists
+drop sequence movie_seq if exists
 drop sequence tperson_seq if exists
 DISCONNECT
 /*C9*/SET SCHEMA PUBLIC
