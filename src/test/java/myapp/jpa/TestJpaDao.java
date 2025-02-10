@@ -114,7 +114,7 @@ public class TestJpaDao {
     p2 = dao.add(p2);
     p3 = dao.add(p3);
 
-    List<Person> personList = dao.findAll("SELECT p FROM Person p", Person.class).stream().toList();
+    List<Person> personList = dao.findAll(Person.class).stream().toList();
     assertEquals(personList.size(), 3);
     assertEquals(personList.get(0).getFirstName(), "Jean");
     assertEquals(personList.get(1).getFirstName(), "Yvan");
@@ -296,5 +296,31 @@ public class TestJpaDao {
     p1.setFirstName("Dimitri");
     Person finalP = p1;
     assertThrows(ObjectOptimisticLockingFailureException.class, () -> dao.update(finalP));
+  }
+
+  @Test
+  public void testUE() {
+    dao.add(new UE("UE1", 6));
+    dao.add(new LicenceUE("UE3", 6, "Compilation"));
+    dao.add(new MasterUE("UE2", 6, "IDL"));
+
+    List<UE> ues = dao.findAll(UE.class).stream().toList();
+    assertEquals(ues.size(), 3);
+
+    List<MasterUE> masterUES = dao.findAll(MasterUE.class).stream().toList();
+    assertEquals(masterUES.size(), 1);
+
+    List<LicenceUE> licenceUES = dao.findAll(LicenceUE.class).stream().toList();
+    assertEquals(licenceUES.size(), 1);
+  }
+
+  @Test
+  public void testFindAll6CreditsMasterUE() {
+    dao.add(new MasterUE("UE1", 6, "IDL"));
+    dao.add(new MasterUE("UE2", 6, "IDL"));
+    dao.add(new MasterUE("UE3", 3, "IDL"));
+
+    List<MasterUE> masterUES = dao.findAll6CreditsMasterUE().stream().toList();
+    assertEquals(masterUES.size(), 2);
   }
 }
